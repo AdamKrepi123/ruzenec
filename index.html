@@ -1,14 +1,20 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Růženec – latina & česky</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <style>
     * { box-sizing: border-box; }
 
-    body {
+    html, body {
       margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
+    body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       line-height: 1.5;
       background: #f5f5f5;
@@ -25,13 +31,13 @@
     .app {
       max-width: 900px;
       width: 100%;
-      padding: 16px;
+      padding: 12px;
     }
 
     .card {
       background: #ffffff;
       border-radius: 12px;
-      padding: 16px 20px;
+      padding: 14px 16px 18px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
 
@@ -41,14 +47,14 @@
     }
 
     h1 {
-      font-size: 1.5rem;
-      margin: 0 0 8px;
+      font-size: 1.4rem;
+      margin: 0 0 4px;
       text-align: center;
     }
 
     h2 {
-      font-size: 1rem;
-      margin: 0 0 4px;
+      font-size: 0.95rem;
+      margin: 0 0 6px;
       text-align: center;
       font-weight: 500;
       color: #555;
@@ -58,13 +64,21 @@
       color: #ddd;
     }
 
+    .top-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
     .top-bar {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin: 12px 0 14px;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       font-size: 0.9rem;
     }
 
@@ -73,6 +87,7 @@
       align-items: center;
       gap: 4px;
       cursor: pointer;
+      font-size: 0.85rem;
     }
 
     select {
@@ -81,6 +96,7 @@
       border: 1px solid #ccc;
       font-size: 0.9rem;
       background: #fafafa;
+      max-width: 100%;
     }
 
     body.dark select {
@@ -92,8 +108,8 @@
     .switch {
       position: relative;
       display: inline-block;
-      width: 38px;
-      height: 20px;
+      width: 40px;
+      height: 22px;
     }
 
     .switch input { display: none; }
@@ -110,8 +126,8 @@
     .slider:before {
       position: absolute;
       content: "";
-      height: 14px;
-      width: 14px;
+      height: 16px;
+      width: 16px;
       left: 3px;
       bottom: 3px;
       background-color: white;
@@ -128,14 +144,50 @@
     }
 
     .meta {
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       color: #666;
-      text-align: center;
-      margin-bottom: 10px;
+      text-align: left;
+      margin-bottom: 8px;
     }
 
     body.dark .meta {
       color: #bbb;
+    }
+
+    /* Počítadlo růženců */
+    .rosary-counter {
+      margin-left: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+    }
+
+    .rosary-counter-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      opacity: 0.8;
+    }
+
+    .rosary-counter-value {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #fff, #bbdefb);
+      color: #0d47a1;
+      font-weight: 700;
+      font-size: 1rem;
+      box-shadow: 0 0 0 1px rgba(25,118,210,0.2);
+    }
+
+    body.dark .rosary-counter-value {
+      background: radial-gradient(circle at 30% 20%, #1a237e, #0d47a1);
+      color: #e3f2fd;
+      box-shadow: 0 0 0 1px rgba(187,222,251,0.4);
     }
 
     .badge {
@@ -155,7 +207,7 @@
 
     .prayer-title {
       font-weight: 600;
-      font-size: 0.96rem;
+      font-size: 0.9rem;
       text-transform: uppercase;
       letter-spacing: 0.04em;
       margin-bottom: 6px;
@@ -165,6 +217,7 @@
     .prayer-text-la, .prayer-text-cs {
       font-size: 0.95rem;
       white-space: pre-wrap;
+      word-wrap: break-word;
     }
 
     .prayer-text-la {
@@ -174,7 +227,7 @@
     .prayer-text-cs {
       border-top: 1px dashed rgba(0,0,0,0.1);
       padding-top: 8px;
-      font-size: 0.94rem;
+      font-size: 0.92rem;
       color: #444;
     }
 
@@ -192,11 +245,11 @@
     }
 
     .progress-bar-wrap {
-      margin-top: 10px;
+      margin-top: 8px;
     }
 
     .progress-label {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       color: #555;
       margin-bottom: 4px;
     }
@@ -228,12 +281,12 @@
     .controls {
       display: flex;
       gap: 8px;
-      margin-top: 16px;
+      margin-top: 14px;
       flex-wrap: wrap;
     }
 
     .controls button {
-      flex: 1 1 120px;
+      flex: 1 1 110px;
       border: none;
       border-radius: 999px;
       padding: 10px 12px;
@@ -242,6 +295,7 @@
       background: #1976d2;
       color: #fff;
       transition: background 0.15s, transform 0.05s, opacity 0.15s;
+      touch-action: manipulation;
     }
 
     .controls button.secondary {
@@ -267,9 +321,48 @@
       background: #2196f3;
     }
 
-    @media (min-width: 700px) {
+    /* Mobilní vylepšení */
+    @media (max-width: 480px) {
+      .app {
+        padding: 8px;
+      }
       .card {
-        padding: 20px 26px;
+        padding: 12px 10px 16px;
+        border-radius: 10px;
+      }
+      h1 {
+        font-size: 1.2rem;
+      }
+      h2 {
+        font-size: 0.9rem;
+      }
+      .top-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .top-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .top-bar label {
+        justify-content: space-between;
+      }
+      select {
+        width: 100%;
+      }
+      .controls {
+        flex-direction: column;
+      }
+      .controls button {
+        width: 100%;
+        font-size: 1rem;
+        padding: 11px 14px;
+      }
+      .prayer-text-la, .prayer-text-cs {
+        font-size: 1rem;
+      }
+      .rosary-counter {
+        align-items: flex-start;
       }
     }
   </style>
@@ -280,32 +373,39 @@
       <h1>Růženec – latina & česky</h1>
       <h2>Radostný • Bolestný • Slavný • Světla</h2>
 
-      <div class="top-bar">
-        <label>
-          Růženec:
-          <select id="rosarySelect">
-            <option value="joyful">Radostný (gaudiózní)</option>
-            <option value="sorrowful">Bolestný (dolorózní)</option>
-            <option value="glorious" selected>Slavný (gloriózní)</option>
-            <option value="luminous">Světla (mystéria lúminósa)</option>
-          </select>
-        </label>
-
-        <label>
-          <span>Čeština</span>
-          <label class="switch">
-            <input type="checkbox" id="toggleCzech" checked>
-            <span class="slider"></span>
+      <div class="top-row">
+        <div class="top-bar">
+          <label>
+            Růženec:
+            <select id="rosarySelect">
+              <option value="joyful">Radostný (gaudiózní)</option>
+              <option value="sorrowful">Bolestný (dolorózní)</option>
+              <option value="glorious" selected>Slavný (gloriózní)</option>
+              <option value="luminous">Světla (mystéria lúminósa)</option>
+            </select>
           </label>
-        </label>
 
-        <label>
-          <span>Tmavý režim</span>
-          <label class="switch">
-            <input type="checkbox" id="toggleDark">
-            <span class="slider"></span>
+          <label>
+            <span>Čeština</span>
+            <label class="switch">
+              <input type="checkbox" id="toggleCzech" checked />
+              <span class="slider"></span>
+            </label>
           </label>
-        </label>
+
+          <label>
+            <span>Tmavý režim</span>
+            <label class="switch">
+              <input type="checkbox" id="toggleDark" />
+              <span class="slider"></span>
+            </label>
+          </label>
+        </div>
+
+        <div class="rosary-counter">
+          <div class="rosary-counter-label">Počet růženců</div>
+          <div class="rosary-counter-value" id="rosaryCount">0</div>
+        </div>
       </div>
 
       <div class="meta" id="meta"></div>
@@ -353,7 +453,7 @@ ascéndit ad cælos, sedet ad déxteram Dei Patris omnipoténtis;
 inde ventúrus est iudicáre vivos et mórtuos.
 Credo in Spíritum Sanctum, sanctam Ecclésiam catholicam,
 sanctórum communiónem, remissiónem peccatórum,
-carnis resurrectiónem, vitam ætérnam. Amen.`;
+carnis resurrectiónem, vitam ætérnæm. Amen.`;
 
     const credoCs = `Věřím v Boha, Otce všemohoucího, Stvořitele nebe i země.
 I v Ježíše Krista, Syna jeho jediného, Pána našeho,
@@ -458,7 +558,6 @@ napodobovali, co obsahují,
 a dosáhli toho, co slibují.
 Skrze Krista, našeho Pána. Amen.`;
 
-    // Úvodní tři Zdrávas – přídavky
     const introAddons = {
       la: [
         "qui fidem nostram augeat.",
@@ -471,8 +570,6 @@ Skrze Krista, našeho Pána. Amen.`;
         "který naši lásku zdokonaluj."
       ]
     };
-
-    // ---------- NASTAVENÍ RŮŽENCŮ S PŘÍDAVKY „JEŽÍŠ, KTERÝ…“ ----------
 
     const rosaryConfigs = {
       joyful: {
@@ -644,21 +741,16 @@ Skrze Krista, našeho Pána. Amen.`;
       }
     };
 
-    // ---------- VYTVÁŘENÍ SEZNAMU MODLITEB PRO DANNÝ RŮŽENEC ----------
-
     function buildRosaryPrayers(config) {
       const prayers = [];
-
       const add = (sectionLa, sectionCs, titleLa, titleCs, textLa, textCs) => {
         prayers.push({ sectionLa, sectionCs, titleLa, titleCs, textLa, textCs });
       };
 
-      // Úvod
       add("Initium", "Začátek", "Signum Crucis", "Znamení kříže", signumCrucisLa, signumCrucisCs);
       add("Initium", "Začátek", "Symbolum Apostolorum (Credo)", "Apoštolské vyznání víry", credoLa, credoCs);
       add("Initium", "Začátek", "Pater noster", "Otče náš", paterLa, paterCs);
 
-      // 3 úvodní Zdrávas s přídavky
       for (let i = 0; i < 3; i++) {
         const num = i + 1;
         const purposesLa = ["pro fidem", "pro spem", "pro caritatem"];
@@ -676,13 +768,11 @@ Skrze Krista, našeho Pána. Amen.`;
 
       add("Initium", "Začátek", "Gloria Patri", "Sláva Otci", gloriaLa, gloriaCs);
 
-      // Tajemství
       config.mysteries.forEach((myst, idx) => {
         const tajNumber = idx + 1;
         const commonTitleLa = `${tajNumber}. mysterium`;
         const commonTitleCs = `${tajNumber}. tajemství`;
 
-        // Pater noster
         add(
           myst.sectionLa,
           myst.sectionCs,
@@ -692,7 +782,6 @@ Skrze Krista, našeho Pána. Amen.`;
           paterCs
         );
 
-        // 10× Zdrávas (s přídavkem)
         for (let i = 1; i <= 10; i++) {
           add(
             myst.sectionLa,
@@ -704,7 +793,6 @@ Skrze Krista, našeho Pána. Amen.`;
           );
         }
 
-        // Gloria + Domine Iesu
         add(
           myst.sectionLa,
           myst.sectionCs,
@@ -724,7 +812,6 @@ Skrze Krista, našeho Pána. Amen.`;
         );
       });
 
-      // Závěr
       add("Conclusio", "Závěr", "Salve Regina", "Salve Regina", salveReginaLa, salveReginaCs);
       add("Conclusio", "Závěr", "Ora pro nobis", "Oroduj za nás", oraProNobisLa, oraProNobisCs);
       add("Conclusio", "Závěr", "Orémus", "Modleme se", oremusLa, oremusCs);
@@ -732,8 +819,6 @@ Skrze Krista, našeho Pána. Amen.`;
 
       return prayers;
     }
-
-    // ---------- LOGIKA UI ----------
 
     const rosarySelect = document.getElementById("rosarySelect");
     const toggleCzech = document.getElementById("toggleCzech");
@@ -752,9 +837,18 @@ Skrze Krista, našeho Pána. Amen.`;
     const btnPrev = document.getElementById("btnPrev");
     const btnNext = document.getElementById("btnNext");
 
+    const rosaryCountEl = document.getElementById("rosaryCount");
+
     let currentRosaryId = "glorious";
     let currentPrayers = buildRosaryPrayers(rosaryConfigs[currentRosaryId]);
     let currentIndex = 0;
+
+    let rosaryCount = Number(localStorage.getItem("rosaryCount") || "0");
+    rosaryCountEl.textContent = rosaryCount;
+
+    function scrollTopSmooth() {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
 
     function render() {
       const p = currentPrayers[currentIndex];
@@ -773,9 +867,12 @@ Skrze Krista, našeho Pána. Amen.`;
 
       btnPrev.disabled = currentIndex === 0;
       btnStart.disabled = currentIndex === 0;
-      btnNext.disabled = currentIndex === total - 1;
+
+      const isLast = currentIndex === total - 1;
+      btnNext.textContent = isLast ? "➕ Přičíst růženec a na začátek" : "Další ▶";
 
       czechBlockEl.style.display = toggleCzech.checked ? "block" : "none";
+      rosaryCountEl.textContent = rosaryCount;
     }
 
     rosarySelect.addEventListener("change", () => {
@@ -783,6 +880,7 @@ Skrze Krista, našeho Pána. Amen.`;
       currentPrayers = buildRosaryPrayers(rosaryConfigs[currentRosaryId]);
       currentIndex = 0;
       render();
+      scrollTopSmooth();
     });
 
     toggleCzech.addEventListener("change", () => {
@@ -800,23 +898,30 @@ Skrze Krista, našeho Pána. Amen.`;
     btnStart.addEventListener("click", () => {
       currentIndex = 0;
       render();
+      scrollTopSmooth();
     });
 
     btnPrev.addEventListener("click", () => {
       if (currentIndex > 0) {
         currentIndex--;
         render();
+        scrollTopSmooth();
       }
     });
 
     btnNext.addEventListener("click", () => {
-      if (currentIndex < currentPrayers.length - 1) {
+      const lastIndex = currentPrayers.length - 1;
+      if (currentIndex < lastIndex) {
         currentIndex++;
-        render();
+      } else {
+        rosaryCount++;
+        localStorage.setItem("rosaryCount", String(rosaryCount));
+        currentIndex = 0;
       }
+      render();
+      scrollTopSmooth();
     });
 
-    // Inicializace
     render();
   </script>
 </body>
