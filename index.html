@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Růženec – latina & česky</title>
+  <title>Růženec – latina & česky (noční režim)</title>
 
   <style>
     * { box-sizing: border-box; }
@@ -17,15 +17,20 @@
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       line-height: 1.5;
-      background: #f5f5f5;
-      color: #222;
+      background: #06070a;
+      color: #f5f5f5;
       display: flex;
       justify-content: center;
     }
 
     body.dark {
-      background: #121212;
+      background: radial-gradient(circle at top, #131b30 0, #05060a 55%, #020308 100%);
       color: #f5f5f5;
+    }
+
+    body:not(.dark) {
+      background: #f5f5f5;
+      color: #222;
     }
 
     .app {
@@ -35,33 +40,34 @@
     }
 
     .card {
-      background: #ffffff;
-      border-radius: 12px;
-      padding: 14px 16px 18px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      background: rgba(10,12,20,0.96);
+      border-radius: 18px;
+      padding: 14px 16px 12px;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      min-height: calc(100vh - 24px); /* skoro celá obrazovka */
+      max-height: calc(100vh - 24px);
     }
 
-    body.dark .card {
-      background: #1e1e1e;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+    body:not(.dark) .card {
+      background: #ffffff;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
     }
 
     h1 {
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       margin: 0 0 4px;
       text-align: center;
+      letter-spacing: 0.03em;
     }
 
     h2 {
-      font-size: 0.95rem;
-      margin: 0 0 6px;
+      font-size: 0.9rem;
+      margin: 0 0 10px;
       text-align: center;
       font-weight: 500;
-      color: #555;
-    }
-
-    body.dark h2 {
-      color: #ddd;
+      opacity: 0.8;
     }
 
     .top-row {
@@ -70,7 +76,7 @@
       justify-content: space-between;
       align-items: center;
       gap: 8px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .top-bar {
@@ -87,22 +93,23 @@
       align-items: center;
       gap: 4px;
       cursor: pointer;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
     }
 
     select {
       padding: 6px 10px;
       border-radius: 999px;
-      border: 1px solid #ccc;
+      border: 1px solid rgba(255,255,255,0.2);
       font-size: 0.9rem;
-      background: #fafafa;
+      background: rgba(11,17,34,0.9);
+      color: #f5f5f5;
       max-width: 100%;
     }
 
-    body.dark select {
-      background: #2b2b2b;
-      color: #f5f5f5;
-      border-color: #555;
+    body:not(.dark) select {
+      background: #fafafa;
+      color: #222;
+      border-color: #ccc;
     }
 
     .switch {
@@ -118,7 +125,7 @@
       position: absolute;
       cursor: pointer;
       top: 0; left: 0; right: 0; bottom: 0;
-      background-color: #ccc;
+      background-color: rgba(255,255,255,0.18);
       transition: .2s;
       border-radius: 999px;
     }
@@ -130,28 +137,29 @@
       width: 16px;
       left: 3px;
       bottom: 3px;
-      background-color: white;
+      background-color: #05060a;
       transition: .2s;
       border-radius: 50%;
     }
 
     input:checked + .slider {
-      background-color: #1976d2;
+      background: linear-gradient(135deg,#64b5f6,#bbdefb);
     }
 
     input:checked + .slider:before {
       transform: translateX(18px);
+      background: #0b1020;
     }
 
     .meta {
-      font-size: 0.8rem;
-      color: #666;
-      text-align: left;
-      margin-bottom: 8px;
+      font-size: 0.78rem;
+      opacity: 0.75;
+      margin-bottom: 4px;
     }
 
-    body.dark .meta {
-      color: #bbb;
+    body:not(.dark) .meta {
+      color: #666;
+      opacity: 1;
     }
 
     /* Počítadlo růženců */
@@ -164,10 +172,10 @@
     }
 
     .rosary-counter-label {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      opacity: 0.8;
+      opacity: 0.75;
     }
 
     .rosary-counter-value {
@@ -177,41 +185,71 @@
       min-width: 44px;
       padding: 4px 10px;
       border-radius: 999px;
-      background: radial-gradient(circle at 30% 20%, #fff, #bbdefb);
-      color: #0d47a1;
+      background: radial-gradient(circle at 30% 15%, #e3f2fd, #0d47a1);
+      color: #e3f2fd;
       font-weight: 700;
-      font-size: 1rem;
+      font-size: 0.95rem;
+      box-shadow: 0 0 0 1px rgba(187,222,251,0.5);
+    }
+
+    body:not(.dark) .rosary-counter-value {
+      background: radial-gradient(circle at 30% 15%, #fff, #bbdefb);
+      color: #0d47a1;
       box-shadow: 0 0 0 1px rgba(25,118,210,0.2);
     }
 
-    body.dark .rosary-counter-value {
-      background: radial-gradient(circle at 30% 20%, #1a237e, #0d47a1);
-      color: #e3f2fd;
-      box-shadow: 0 0 0 1px rgba(187,222,251,0.4);
+    /* PRAYER SCROLL – fixní okno, ve kterém se scrolluje text */
+    .prayer-scroll {
+      flex: 1;
+      margin-top: 4px;
+      margin-bottom: 8px;
+      padding: 8px 10px 8px;
+      border-radius: 12px;
+      background: radial-gradient(circle at top left, rgba(120,144,156,0.25), rgba(13,17,34,0.95));
+      border: 1px solid rgba(176,190,197,0.4);
+      overflow-y: auto;
+    }
+
+    body:not(.dark) .prayer-scroll {
+      background: #fafafa;
+      border-color: rgba(0,0,0,0.08);
     }
 
     .badge {
-      display: inline-block;
-      padding: 2px 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 2px 10px;
       border-radius: 999px;
       font-size: 0.75rem;
-      background: #e3f2fd;
-      color: #0d47a1;
-      margin-bottom: 6px;
+      background: rgba(129,212,250,0.1);
+      color: #b3e5fc;
+      margin-bottom: 4px;
     }
 
-    body.dark .badge {
-      background: #1a3054;
-      color: #bbdefb;
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #4fc3f7;
+    }
+
+    body:not(.dark) .badge {
+      background: #e3f2fd;
+      color: #0d47a1;
+    }
+    body:not(.dark) .badge-dot {
+      background: #1976d2;
     }
 
     .prayer-title {
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.06em;
       margin-bottom: 6px;
       text-align: center;
+      opacity: 0.9;
     }
 
     .prayer-text-la, .prayer-text-cs {
@@ -225,63 +263,60 @@
     }
 
     .prayer-text-cs {
-      border-top: 1px dashed rgba(0,0,0,0.1);
+      border-top: 1px dashed rgba(207,216,220,0.5);
       padding-top: 8px;
-      font-size: 0.92rem;
-      color: #444;
+      font-size: 0.9rem;
+      opacity: 0.95;
     }
 
-    body.dark .prayer-text-cs {
-      border-color: rgba(255,255,255,0.18);
-      color: #eee;
+    body:not(.dark) .prayer-text-cs {
+      color: #444;
+      border-color: rgba(0,0,0,0.12);
     }
 
     .label-lang {
       font-size: 0.78rem;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      opacity: 0.75;
+      opacity: 0.7;
       margin-bottom: 2px;
     }
 
     .progress-bar-wrap {
-      margin-top: 8px;
+      margin-top: 4px;
+      margin-bottom: 6px;
     }
 
     .progress-label {
       font-size: 0.78rem;
-      color: #555;
-      margin-bottom: 4px;
-    }
-
-    body.dark .progress-label {
-      color: #ddd;
+      opacity: 0.8;
+      margin-bottom: 3px;
     }
 
     .progress-bar {
       width: 100%;
-      height: 6px;
-      background: #e0e0e0;
+      height: 5px;
+      background: rgba(55,71,79,0.9);
       border-radius: 999px;
       overflow: hidden;
-    }
-
-    body.dark .progress-bar {
-      background: #333;
     }
 
     .progress-inner {
       height: 100%;
       width: 0%;
       border-radius: 999px;
-      background: #1976d2;
+      background: linear-gradient(90deg,#4fc3f7,#82b1ff);
       transition: width 0.2s;
+    }
+
+    body:not(.dark) .progress-bar {
+      background: #e0e0e0;
     }
 
     .controls {
       display: flex;
       gap: 8px;
-      margin-top: 14px;
+      margin-top: 4px;
       flex-wrap: wrap;
     }
 
@@ -289,52 +324,58 @@
       flex: 1 1 110px;
       border: none;
       border-radius: 999px;
-      padding: 10px 12px;
-      font-size: 0.95rem;
+      padding: 9px 10px;
+      font-size: 0.9rem;
       cursor: pointer;
-      background: #1976d2;
+      background: linear-gradient(135deg,#42a5f5,#1e88e5);
       color: #fff;
-      transition: background 0.15s, transform 0.05s, opacity 0.15s;
+      transition: transform 0.05s, opacity 0.15s, box-shadow 0.15s;
       touch-action: manipulation;
+      box-shadow: 0 4px 12px rgba(33,150,243,0.45);
+      white-space: nowrap;
     }
 
     .controls button.secondary {
-      background: #e0e0e0;
-      color: #222;
+      background: rgba(69,90,100,0.9);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.5);
     }
 
-    body.dark .controls button.secondary {
-      background: #444;
-      color: #fff;
+    body:not(.dark) .controls button.secondary {
+      background: #e0e0e0;
+      color: #222;
+      box-shadow: none;
     }
 
     .controls button:disabled {
-      opacity: 0.5;
+      opacity: 0.4;
       cursor: default;
+      box-shadow: none;
     }
 
     .controls button:not(:disabled):active {
       transform: scale(0.97);
     }
 
-    body.dark .controls button:not(.secondary) {
-      background: #2196f3;
+    body:not(.dark) .controls button:not(.secondary) {
+      background: #1976d2;
+      box-shadow: 0 4px 10px rgba(25,118,210,0.4);
     }
 
-    /* Mobilní úpravy – rozumná tlačítka, 3 vedle sebe */
     @media (max-width: 480px) {
       .app {
         padding: 8px;
       }
       .card {
-        padding: 12px 10px 16px;
-        border-radius: 10px;
+        padding: 10px 10px 10px;
+        border-radius: 14px;
+        min-height: calc(100vh - 16px);
+        max-height: calc(100vh - 16px);
       }
       h1 {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
       }
       h2 {
-        font-size: 0.9rem;
+        font-size: 0.82rem;
       }
       .top-row {
         flex-direction: column;
@@ -353,19 +394,17 @@
       }
 
       .controls {
-        flex-wrap: wrap;
-        justify-content: space-between;
+        flex-wrap: nowrap;
       }
       .controls button {
-        flex: 1 1 calc(33% - 6px);
-        width: auto;
-        font-size: 0.9rem;
+        flex: 1 1 0;
+        font-size: 0.85rem;
         padding: 8px 6px;
       }
 
       .prayer-text-la,
       .prayer-text-cs {
-        font-size: 0.98rem;
+        font-size: 0.95rem;
       }
 
       .rosary-counter {
@@ -374,11 +413,11 @@
     }
   </style>
 </head>
-<body>
+<body class="dark">
   <div class="app">
     <div class="card">
       <h1>Růženec – latina & česky</h1>
-      <h2>Radostný • Bolestný • Slavný • Světla</h2>
+      <h2>Noční režim • Radostný • Bolestný • Slavný • Světla</h2>
 
       <div class="top-row">
         <div class="top-bar">
@@ -401,9 +440,9 @@
           </label>
 
           <label>
-            <span>Tmavý režim</span>
+            <span>Noční režim</span>
             <label class="switch">
-              <input type="checkbox" id="toggleDark" />
+              <input type="checkbox" id="toggleDark" checked />
               <span class="slider"></span>
             </label>
           </label>
@@ -417,8 +456,12 @@
 
       <div class="meta" id="meta"></div>
 
-      <div class="prayer-section">
-        <div class="badge" id="sectionBadge"></div>
+      <!-- FIXNÍ „OKNO“ NA TEXT – V NĚM SE SCROLLUJE -->
+      <div class="prayer-scroll" id="prayerScroll">
+        <div class="badge" id="sectionBadge">
+          <span class="badge-dot"></span>
+          <span id="sectionBadgeText"></span>
+        </div>
         <div class="prayer-title" id="prayerTitle"></div>
 
         <div class="label-lang">LATINĚ</div>
@@ -428,24 +471,34 @@
           <div class="label-lang">ČESKY</div>
           <div class="prayer-text-cs" id="prayerTextCs"></div>
         </div>
-      </div>
 
-      <div class="progress-bar-wrap">
-        <div class="progress-label" id="progressLabel"></div>
-        <div class="progress-bar">
-          <div class="progress-inner" id="progressInner"></div>
+        <div class="progress-bar-wrap">
+          <div class="progress-label" id="progressLabel"></div>
+          <div class="progress-bar">
+            <div class="progress-inner" id="progressInner"></div>
+          </div>
         </div>
       </div>
 
       <div class="controls">
-        <button id="btnStart">⏮ Na začátek</button>
-        <button id="btnPrev" class="secondary">◀ Předchozí</button>
+        <button id="btnStart">⏮ Začátek</button>
+        <button id="btnPrev" class="secondary">◀ Zpět</button>
         <button id="btnNext">Další ▶</button>
       </div>
     </div>
   </div>
 
   <script>
+    // ---------- HAPTIKA (VIBRACE) ----------
+    function playHaptic(type = 'normal') {
+      if (!('vibrate' in navigator)) return;
+      if (type === 'strong') {
+        navigator.vibrate([30, 40, 30]);
+      } else {
+        navigator.vibrate(25);
+      }
+    }
+
     // ---------- ZÁKLADNÍ MODLITBY – LATINSKY & ČESKY ----------
 
     const signumCrucisLa = `In nómine Patris, et Fílii, et Spíritus Sancti. Amen.`;
@@ -832,13 +885,14 @@ Skrze Krista, našeho Pána. Amen.`;
     const toggleDark = document.getElementById("toggleDark");
 
     const metaEl = document.getElementById("meta");
-    const sectionBadgeEl = document.getElementById("sectionBadge");
+    const sectionBadgeTextEl = document.getElementById("sectionBadgeText");
     const prayerTitleEl = document.getElementById("prayerTitle");
     const prayerTextLaEl = document.getElementById("prayerTextLa");
     const prayerTextCsEl = document.getElementById("prayerTextCs");
     const czechBlockEl = document.getElementById("czechBlock");
     const progressLabelEl = document.getElementById("progressLabel");
     const progressInnerEl = document.getElementById("progressInner");
+    const prayerScrollEl = document.getElementById("prayerScroll");
 
     const btnStart = document.getElementById("btnStart");
     const btnPrev = document.getElementById("btnPrev");
@@ -853,13 +907,14 @@ Skrze Krista, našeho Pána. Amen.`;
     let rosaryCount = Number(localStorage.getItem("rosaryCount") || "0");
     rosaryCountEl.textContent = rosaryCount;
 
-    function scrollTopSmooth() {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+    function scrollTextTop() {
+      if (!prayerScrollEl) return;
+      prayerScrollEl.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     function render() {
       const p = currentPrayers[currentIndex];
-      sectionBadgeEl.textContent = `${p.sectionLa} / ${p.sectionCs}`;
+      sectionBadgeTextEl.textContent = `${p.sectionLa} / ${p.sectionCs}`;
       prayerTitleEl.textContent = `${p.titleLa} · ${p.titleCs}`;
 
       prayerTextLaEl.innerHTML = p.textLa.replace(/\n/g, "<br>");
@@ -883,18 +938,21 @@ Skrze Krista, našeho Pána. Amen.`;
     }
 
     rosarySelect.addEventListener("change", () => {
+      playHaptic();
       currentRosaryId = rosarySelect.value;
       currentPrayers = buildRosaryPrayers(rosaryConfigs[currentRosaryId]);
       currentIndex = 0;
       render();
-      scrollTopSmooth();
+      scrollTextTop();
     });
 
     toggleCzech.addEventListener("change", () => {
+      playHaptic();
       czechBlockEl.style.display = toggleCzech.checked ? "block" : "none";
     });
 
     toggleDark.addEventListener("change", () => {
+      playHaptic();
       if (toggleDark.checked) {
         document.body.classList.add("dark");
       } else {
@@ -903,31 +961,40 @@ Skrze Krista, našeho Pána. Amen.`;
     });
 
     btnStart.addEventListener("click", () => {
+      playHaptic();
       currentIndex = 0;
       render();
-      scrollTopSmooth();
+      scrollTextTop();
     });
 
     btnPrev.addEventListener("click", () => {
       if (currentIndex > 0) {
+        playHaptic();
         currentIndex--;
         render();
-        scrollTopSmooth();
+        scrollTextTop();
       }
     });
 
     btnNext.addEventListener("click", () => {
       const lastIndex = currentPrayers.length - 1;
       if (currentIndex < lastIndex) {
+        playHaptic();
         currentIndex++;
       } else {
+        playHaptic('strong');
         rosaryCount++;
         localStorage.setItem("rosaryCount", String(rosaryCount));
         currentIndex = 0;
       }
       render();
-      scrollTopSmooth();
+      scrollTextTop();
     });
+
+    // inicializace – noční režim podle checkboxu
+    if (toggleDark.checked) {
+      document.body.classList.add("dark");
+    }
 
     render();
   </script>
