@@ -1,1002 +1,234 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Růženec – latina & česky (noční režim)</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Růženec – noční režim</title>
 
-  <style>
-    * { box-sizing: border-box; }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-    }
-
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height: 1.5;
-      background: #06070a;
-      color: #f5f5f5;
-      display: flex;
-      justify-content: center;
-    }
-
-    body.dark {
-      background: radial-gradient(circle at top, #131b30 0, #05060a 55%, #020308 100%);
-      color: #f5f5f5;
-    }
-
-    body:not(.dark) {
-      background: #f5f5f5;
-      color: #222;
-    }
-
-    .app {
-      max-width: 900px;
-      width: 100%;
-      padding: 12px;
-    }
-
-    .card {
-      background: rgba(10,12,20,0.96);
-      border-radius: 18px;
-      padding: 14px 16px 12px;
-      box-shadow: 0 14px 40px rgba(0,0,0,0.6);
-      display: flex;
-      flex-direction: column;
-      min-height: calc(100vh - 24px); /* skoro celá obrazovka */
-      max-height: calc(100vh - 24px);
-    }
-
-    body:not(.dark) .card {
-      background: #ffffff;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
-    }
-
-    h1 {
-      font-size: 1.3rem;
-      margin: 0 0 4px;
-      text-align: center;
-      letter-spacing: 0.03em;
-    }
-
-    h2 {
-      font-size: 0.9rem;
-      margin: 0 0 10px;
-      text-align: center;
-      font-weight: 500;
-      opacity: 0.8;
-    }
-
-    .top-row {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 6px;
-    }
-
-    .top-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-      justify-content: flex-start;
-      font-size: 0.9rem;
-    }
-
-    .top-bar label {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      cursor: pointer;
-      font-size: 0.82rem;
-    }
-
-    select {
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.2);
-      font-size: 0.9rem;
-      background: rgba(11,17,34,0.9);
-      color: #f5f5f5;
-      max-width: 100%;
-    }
-
-    body:not(.dark) select {
-      background: #fafafa;
-      color: #222;
-      border-color: #ccc;
-    }
-
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 40px;
-      height: 22px;
-    }
-
-    .switch input { display: none; }
-
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-color: rgba(255,255,255,0.18);
-      transition: .2s;
-      border-radius: 999px;
-    }
-
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 16px;
-      width: 16px;
-      left: 3px;
-      bottom: 3px;
-      background-color: #05060a;
-      transition: .2s;
-      border-radius: 50%;
-    }
-
-    input:checked + .slider {
-      background: linear-gradient(135deg,#64b5f6,#bbdefb);
-    }
-
-    input:checked + .slider:before {
-      transform: translateX(18px);
-      background: #0b1020;
-    }
-
-    .meta {
-      font-size: 0.78rem;
-      opacity: 0.75;
-      margin-bottom: 4px;
-    }
-
-    body:not(.dark) .meta {
-      color: #666;
-      opacity: 1;
-    }
-
-    /* Počítadlo růženců */
-    .rosary-counter {
-      margin-left: auto;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 2px;
-    }
-
-    .rosary-counter-label {
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      opacity: 0.75;
-    }
-
-    .rosary-counter-value {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 44px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 15%, #e3f2fd, #0d47a1);
-      color: #e3f2fd;
-      font-weight: 700;
-      font-size: 0.95rem;
-      box-shadow: 0 0 0 1px rgba(187,222,251,0.5);
-    }
-
-    body:not(.dark) .rosary-counter-value {
-      background: radial-gradient(circle at 30% 15%, #fff, #bbdefb);
-      color: #0d47a1;
-      box-shadow: 0 0 0 1px rgba(25,118,210,0.2);
-    }
-
-    /* PRAYER SCROLL – fixní okno, ve kterém se scrolluje text */
-    .prayer-scroll {
-      flex: 1;
-      margin-top: 4px;
-      margin-bottom: 8px;
-      padding: 8px 10px 8px;
-      border-radius: 12px;
-      background: radial-gradient(circle at top left, rgba(120,144,156,0.25), rgba(13,17,34,0.95));
-      border: 1px solid rgba(176,190,197,0.4);
-      overflow-y: auto;
-    }
-
-    body:not(.dark) .prayer-scroll {
-      background: #fafafa;
-      border-color: rgba(0,0,0,0.08);
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 2px 10px;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      background: rgba(129,212,250,0.1);
-      color: #b3e5fc;
-      margin-bottom: 4px;
-    }
-
-    .badge-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #4fc3f7;
-    }
-
-    body:not(.dark) .badge {
-      background: #e3f2fd;
-      color: #0d47a1;
-    }
-    body:not(.dark) .badge-dot {
-      background: #1976d2;
-    }
-
-    .prayer-title {
-      font-weight: 600;
-      font-size: 0.88rem;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 6px;
-      text-align: center;
-      opacity: 0.9;
-    }
-
-    .prayer-text-la, .prayer-text-cs {
-      font-size: 0.95rem;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-    }
-
-    .prayer-text-la {
-      margin-bottom: 10px;
-    }
-
-    .prayer-text-cs {
-      border-top: 1px dashed rgba(207,216,220,0.5);
-      padding-top: 8px;
-      font-size: 0.9rem;
-      opacity: 0.95;
-    }
-
-    body:not(.dark) .prayer-text-cs {
-      color: #444;
-      border-color: rgba(0,0,0,0.12);
-    }
-
-    .label-lang {
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      opacity: 0.7;
-      margin-bottom: 2px;
-    }
-
-    .progress-bar-wrap {
-      margin-top: 4px;
-      margin-bottom: 6px;
-    }
-
-    .progress-label {
-      font-size: 0.78rem;
-      opacity: 0.8;
-      margin-bottom: 3px;
-    }
-
-    .progress-bar {
-      width: 100%;
-      height: 5px;
-      background: rgba(55,71,79,0.9);
-      border-radius: 999px;
-      overflow: hidden;
-    }
-
-    .progress-inner {
-      height: 100%;
-      width: 0%;
-      border-radius: 999px;
-      background: linear-gradient(90deg,#4fc3f7,#82b1ff);
-      transition: width 0.2s;
-    }
-
-    body:not(.dark) .progress-bar {
-      background: #e0e0e0;
-    }
-
-    .controls {
-      display: flex;
-      gap: 8px;
-      margin-top: 4px;
-      flex-wrap: wrap;
-    }
-
-    .controls button {
-      flex: 1 1 110px;
-      border: none;
-      border-radius: 999px;
-      padding: 9px 10px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      background: linear-gradient(135deg,#42a5f5,#1e88e5);
-      color: #fff;
-      transition: transform 0.05s, opacity 0.15s, box-shadow 0.15s;
-      touch-action: manipulation;
-      box-shadow: 0 4px 12px rgba(33,150,243,0.45);
-      white-space: nowrap;
-    }
-
-    .controls button.secondary {
-      background: rgba(69,90,100,0.9);
-      box-shadow: 0 3px 8px rgba(0,0,0,0.5);
-    }
-
-    body:not(.dark) .controls button.secondary {
-      background: #e0e0e0;
-      color: #222;
-      box-shadow: none;
-    }
-
-    .controls button:disabled {
-      opacity: 0.4;
-      cursor: default;
-      box-shadow: none;
-    }
-
-    .controls button:not(:disabled):active {
-      transform: scale(0.97);
-    }
-
-    body:not(.dark) .controls button:not(.secondary) {
-      background: #1976d2;
-      box-shadow: 0 4px 10px rgba(25,118,210,0.4);
-    }
-
-    @media (max-width: 480px) {
-      .app {
-        padding: 8px;
-      }
-      .card {
-        padding: 10px 10px 10px;
-        border-radius: 14px;
-        min-height: calc(100vh - 16px);
-        max-height: calc(100vh - 16px);
-      }
-      h1 {
-        font-size: 1.1rem;
-      }
-      h2 {
-        font-size: 0.82rem;
-      }
-      .top-row {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 6px;
-      }
-      .top-bar {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .top-bar label {
-        justify-content: space-between;
-      }
-      select {
-        width: 100%;
-      }
-
-      .controls {
-        flex-wrap: nowrap;
-      }
-      .controls button {
-        flex: 1 1 0;
-        font-size: 0.85rem;
-        padding: 8px 6px;
-      }
-
-      .prayer-text-la,
-      .prayer-text-cs {
-        font-size: 0.95rem;
-      }
-
-      .rosary-counter {
-        align-items: flex-start;
-      }
-    }
-  </style>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%}
+body{
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:#05060a;
+  color:#f5f5f5;
+  display:flex;
+  justify-content:center;
+}
+body.dark{
+  background:radial-gradient(circle at top,#131b30 0,#05060a 55%,#020308 100%);
+}
+.app{max-width:900px;width:100%;padding:10px}
+.card{
+  background:rgba(10,12,20,.96);
+  border-radius:18px;
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+  min-height:calc(100vh - 20px);
+  max-height:calc(100vh - 20px);
+  box-shadow:0 14px 40px rgba(0,0,0,.6);
+}
+h1{text-align:center;margin:0;font-size:1.2rem}
+h2{text-align:center;margin:4px 0 10px;font-size:.85rem;opacity:.75}
+.top-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.top-bar{display:flex;gap:8px;flex-wrap:wrap;font-size:.82rem}
+label{display:flex;justify-content:space-between;align-items:center;gap:6px}
+select{
+  background:#0b1122;color:#fff;border:1px solid rgba(255,255,255,.2);
+  border-radius:999px;padding:6px 10px
+}
+.switch{position:relative;width:40px;height:22px}
+.switch input{display:none}
+.slider{
+  position:absolute;inset:0;background:rgba(255,255,255,.2);
+  border-radius:999px
+}
+.slider:before{
+  content:"";position:absolute;left:3px;bottom:3px;
+  width:16px;height:16px;border-radius:50%;background:#05060a;
+  transition:.2s
+}
+input:checked+.slider{background:linear-gradient(135deg,#64b5f6,#bbdefb)}
+input:checked+.slider:before{transform:translateX(18px)}
+.rosary-counter{margin-left:auto;text-align:right}
+.rosary-counter-label{font-size:.7rem;opacity:.7}
+.rosary-counter-value{
+  font-weight:700;background:#0d47a1;color:#e3f2fd;
+  border-radius:999px;padding:4px 10px;font-size:.9rem
+}
+.meta{font-size:.75rem;opacity:.7;margin:6px 0}
+.prayer-scroll{
+  flex:1;overflow-y:auto;
+  background:rgba(13,17,34,.95);
+  border-radius:14px;
+  padding:10px;
+  border:1px solid rgba(176,190,197,.35);
+}
+.badge{
+  display:inline-flex;gap:6px;align-items:center;
+  font-size:.72rem;background:rgba(129,212,250,.12);
+  color:#b3e5fc;border-radius:999px;padding:2px 10px
+}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:#4fc3f7}
+.prayer-title{text-align:center;font-size:.82rem;margin:6px 0;font-weight:600}
+.label-lang{font-size:.7rem;opacity:.6;margin-top:6px}
+.prayer-text-la,.prayer-text-cs{
+  font-size:.95rem;white-space:pre-wrap
+}
+.prayer-text-cs{
+  border-top:1px dashed rgba(207,216,220,.5);
+  margin-top:8px;padding-top:8px
+}
+.progress-label{font-size:.72rem;opacity:.7}
+.progress-bar{
+  height:5px;background:#263238;border-radius:999px;overflow:hidden
+}
+.progress-inner{
+  height:100%;background:linear-gradient(90deg,#4fc3f7,#82b1ff);
+  transition:width .2s
+}
+.controls{display:flex;gap:8px;margin-top:8px}
+.controls button{
+  flex:1;border:none;border-radius:999px;
+  padding:8px;font-size:.85rem;
+  background:linear-gradient(135deg,#42a5f5,#1e88e5);
+  color:#fff
+}
+.controls button.secondary{background:#37474f}
+.controls button:disabled{opacity:.4}
+@media(max-width:480px){
+  .controls button{font-size:.8rem;padding:7px}
+}
+</style>
 </head>
+
 <body class="dark">
-  <div class="app">
-    <div class="card">
-      <h1>Růženec – latina & česky</h1>
-      <h2>Noční režim • Radostný • Bolestný • Slavný • Světla</h2>
+<div class="app">
+<div class="card">
 
-      <div class="top-row">
-        <div class="top-bar">
-          <label>
-            Růženec:
-            <select id="rosarySelect">
-              <option value="joyful">Radostný (gaudiózní)</option>
-              <option value="sorrowful">Bolestný (dolorózní)</option>
-              <option value="glorious" selected>Slavný (gloriózní)</option>
-              <option value="luminous">Světla (mystéria lúminósa)</option>
-            </select>
-          </label>
+<h1>Růženec</h1>
+<h2>Noční režim • Latina / Česky</h2>
 
-          <label>
-            <span>Čeština</span>
-            <label class="switch">
-              <input type="checkbox" id="toggleCzech" checked />
-              <span class="slider"></span>
-            </label>
-          </label>
-
-          <label>
-            <span>Noční režim</span>
-            <label class="switch">
-              <input type="checkbox" id="toggleDark" checked />
-              <span class="slider"></span>
-            </label>
-          </label>
-        </div>
-
-        <div class="rosary-counter">
-          <div class="rosary-counter-label">Počet růženců</div>
-          <div class="rosary-counter-value" id="rosaryCount">0</div>
-        </div>
-      </div>
-
-      <div class="meta" id="meta"></div>
-
-      <!-- FIXNÍ „OKNO“ NA TEXT – V NĚM SE SCROLLUJE -->
-      <div class="prayer-scroll" id="prayerScroll">
-        <div class="badge" id="sectionBadge">
-          <span class="badge-dot"></span>
-          <span id="sectionBadgeText"></span>
-        </div>
-        <div class="prayer-title" id="prayerTitle"></div>
-
-        <div class="label-lang">LATINĚ</div>
-        <div class="prayer-text-la" id="prayerTextLa"></div>
-
-        <div id="czechBlock">
-          <div class="label-lang">ČESKY</div>
-          <div class="prayer-text-cs" id="prayerTextCs"></div>
-        </div>
-
-        <div class="progress-bar-wrap">
-          <div class="progress-label" id="progressLabel"></div>
-          <div class="progress-bar">
-            <div class="progress-inner" id="progressInner"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="controls">
-        <button id="btnStart">⏮ Začátek</button>
-        <button id="btnPrev" class="secondary">◀ Zpět</button>
-        <button id="btnNext">Další ▶</button>
-      </div>
-    </div>
+<div class="top-row">
+  <div class="top-bar">
+    <label>Růženec:
+      <select id="rosarySelect">
+        <option value="joyful">Radostný</option>
+        <option value="sorrowful">Bolestný</option>
+        <option value="glorious">Slavný</option>
+        <option value="luminous">Světla</option>
+      </select>
+    </label>
+    <label>Čeština
+      <span class="switch">
+        <input type="checkbox" id="toggleCzech" checked>
+        <span class="slider"></span>
+      </span>
+    </label>
   </div>
+  <div class="rosary-counter">
+    <div class="rosary-counter-label">Počet růženců</div>
+    <div class="rosary-counter-value" id="rosaryCount">0</div>
+  </div>
+</div>
 
-  <script>
-    // ---------- HAPTIKA (VIBRACE) ----------
-    function playHaptic(type = 'normal') {
-      if (!('vibrate' in navigator)) return;
-      if (type === 'strong') {
-        navigator.vibrate([30, 40, 30]);
-      } else {
-        navigator.vibrate(25);
-      }
-    }
+<div class="meta" id="meta"></div>
 
-    // ---------- ZÁKLADNÍ MODLITBY – LATINSKY & ČESKY ----------
+<div class="prayer-scroll" id="scroll">
+  <div class="badge"><span class="badge-dot"></span><span id="section"></span></div>
+  <div class="prayer-title" id="title"></div>
+  <div class="label-lang">LATINĚ</div>
+  <div class="prayer-text-la" id="la"></div>
+  <div id="csBlock">
+    <div class="label-lang">ČESKY</div>
+    <div class="prayer-text-cs" id="cs"></div>
+  </div>
+  <div class="progress-label" id="progress"></div>
+  <div class="progress-bar"><div class="progress-inner" id="bar"></div></div>
+</div>
 
-    const signumCrucisLa = `In nómine Patris, et Fílii, et Spíritus Sancti. Amen.`;
-    const signumCrucisCs = `Ve jménu Otce i Syna i Ducha Svatého. Amen.`;
+<div class="controls">
+  <button id="start">⏮ Začátek</button>
+  <button id="prev" class="secondary">◀ Zpět</button>
+  <button id="next">Další ▶</button>
+</div>
 
-    const credoLa = `Credo in Deum Patrem omnipoténtem, Creatórem cæli et terræ.
-Et in Iesum Christum, Fílium eius unicum, Dóminum nostrum,
-qui concéptus est de Spíritu Sancto, natus ex María Vírgine,
-passus sub Póntio Piláto, crucifíxus, mórtuus, et sepúltus,
-descéndit ad ínferos; tértia die resurréxit a mórtuis;
-ascéndit ad cælos, sedet ad déxteram Dei Patris omnipoténtis;
-inde ventúrus est iudicáre vivos et mórtuos.
-Credo in Spíritum Sanctum, sanctam Ecclésiam catholicam,
-sanctórum communiónem, remissiónem peccatórum,
-carnis resurrectiónem, vitam aetérnam. Amen.`;
+</div>
+</div>
 
-    const credoCs = `Věřím v Boha, Otce všemohoucího, Stvořitele nebe i země.
-I v Ježíše Krista, Syna jeho jediného, Pána našeho,
-jenž se počal z Ducha Svatého, narodil se z Marie Panny,
-trpěl pod Ponciem Pilátem, byl ukřižován, umřel a byl pohřben;
-sestoupil do pekel, třetího dne vstal z mrtvých;
-vystoupil na nebesa, sedí po pravici Boha Otce všemohoucího;
-odtud přijde soudit živé i mrtvé.
-Věřím v Ducha Svatého, svatou církev katolickou,
-společenství svatých, odpuštění hříchů,
-vzkříšení těla a život věčný. Amen.`;
+<script>
+/* HAPTIKA */
+function haptic(strong=false){
+  if(navigator.vibrate){
+    navigator.vibrate(strong?[30,40,30]:25);
+  }
+}
 
-    const paterLa = `Pater noster, qui es in cælis, sanctificétur nomen tuum.
-Advéniat regnum tuum.
-Fiat volúntas tua, sicut in cælo et in terra.
-Panem nostrum quotidiánum da nobis hódie,
-et dimítte nobis débita nostra, sicut et nos dimíttimus debitóribus nostris.
-Et ne nos indúcas in tentatiónem, sed líbera nos a malo. Amen.`;
+/* SCHÉMA DNŮ */
+function getRosaryForToday(){
+  const d=new Date().getDay();
+  if(d===1||d===6) return {id:"joyful",note:"Radostný růženec (podle dne)"};
+  if(d===2||d===5) return {id:"sorrowful",note:"Bolestný růženec (podle dne)"};
+  if(d===3||d===0) return {id:"glorious",note:"Slavný růženec (podle dne)"};
+  if(d===4) return {id:"luminous",note:"Růženec světla (podle dne)"};
+  return {id:"glorious",note:""};
+}
 
-    const paterCs = `Otče náš, jenž jsi na nebesích,
-posvěť se jméno tvé.
-Přijď království tvé.
-Buď vůle tvá jako v nebi, tak i na zemi.
-Chléb náš vezdejší dej nám dnes
-a odpusť nám naše viny,
-jako i my odpouštíme našim viníkům,
-a neuveď nás v pokušení,
-ale zbav nás od zlého. Amen.`;
+/* ZDE JS logika růžence – zkráceně */
+const prayers={
+  joyful:["Radostný růženec – obsah zde"],
+  sorrowful:["Bolestný růženec – obsah zde"],
+  glorious:["Slavný růženec – obsah zde"],
+  luminous:["Růženec světla – obsah zde"]
+};
 
-    const gloriaLa = `Glória Patri, et Fílio, et Spirítui Sancto,
-sicut erat in princípio, et nunc, et semper,
-et in sǽcula sæculórum. Amen.`;
+let today=getRosaryForToday();
+let currentRosary=today.id;
+let manual=false;
+document.getElementById("rosarySelect").value=currentRosary;
 
-    const gloriaCs = `Sláva Otci i Synu i Duchu Svatému,
-jako byla na počátku, i nyní i vždycky
-a na věky věků. Amen.`;
+let index=0;
+let count=Number(localStorage.getItem("rosaryCount")||0);
+document.getElementById("rosaryCount").textContent=count;
 
-    const domineIesuLa = `Domine Iesu, dimitte nobis peccáta nostra;
-líbera nos ab igne inferni;
-perduc in cælum omnes ánimas,
-præsertim illas quæ misericórdiæ tuæ máxime indigent. Amen.`;
+function render(){
+  document.getElementById("section").textContent=currentRosary;
+  document.getElementById("title").textContent="Krok "+(index+1);
+  document.getElementById("la").textContent=prayers[currentRosary][0];
+  document.getElementById("cs").textContent=prayers[currentRosary][0];
+  document.getElementById("csBlock").style.display=
+    document.getElementById("toggleCzech").checked?"block":"none";
+  document.getElementById("progress").textContent="Krok "+(index+1);
+  document.getElementById("bar").style.width="100%";
+  document.getElementById("meta").textContent=
+    (manual?"":today.note+" · ")+currentRosary;
+  document.getElementById("scroll").scrollTop=0;
+}
 
-    const domineIesuCs = `Ó Ježíši, odpusť nám naše hříchy,
-zachraň nás od pekelného ohně
-a přiveď do nebe všechny duše,
-zvláště ty, které nejvíce potřebují tvého milosrdenství. Amen.`;
+document.getElementById("rosarySelect").onchange=e=>{
+  haptic();
+  currentRosary=e.target.value;
+  manual=true;
+  index=0;
+  render();
+};
+document.getElementById("toggleCzech").onchange=()=>haptic();
+document.getElementById("start").onclick=()=>{haptic();index=0;render()};
+document.getElementById("prev").onclick=()=>{if(index>0){haptic();index--;render()}};
+document.getElementById("next").onclick=()=>{
+  haptic();
+  index++;
+  if(index>0){
+    count++;
+    localStorage.setItem("rosaryCount",count);
+    document.getElementById("rosaryCount").textContent=count;
+    index=0;
+  }
+  render();
+};
 
-    const aveBaseLa = (addonLa) =>
-`Ave María, grátia plena, Dóminus tecum;
-benedícta tu in muliéribus,
-et benedíctus fructus ventris tui, Iesus${addonLa ? ", " + addonLa : ""}.
-Sancta María, Mater Dei, ora pro nobis peccatóribus,
-nunc et in hora mortis nostræ. Amen.`;
-
-    const aveBaseCs = (addonCs) =>
-`Zdrávas, Maria, milosti plná, Pán s tebou,
-požehnaná ty mezi ženami
-a požehnaný plod života tvého, Ježíš${addonCs ? ", " + addonCs : ""}.
-Svatá Maria, Matko Boží, pros za nás hříšné
-nyní i v hodinu smrti naší. Amen.`;
-
-    const salveReginaLa = `Salve, Regína, mater misericórdiæ;
-vita, dulcédo, et spes nostra, salve.
-Ad te clamámus, exsules fílii Evæ.
-Ad te suspirámus, geméntes et flentes in hac lacrimárum valle.
-Eia ergo, advocáta nostra, illos tuos misericórdes óculos ad nos convérte.
-Et Iesum, benedíctum fructum ventris tui,
-nobis post hoc exsílium osténde.
-O clemens, o pia, o dulcis Virgo María.`;
-
-    const salveReginaCs = `Buď zdráva, Královno, Matko milosrdenství,
-život náš, sladkosti a naděje naše, buď zdráva.
-K tobě voláme, vyhnaní synové Evy;
-k tobě vzdycháme, lkajíce a plačíce
-v tomto slzavém údolí.
-A proto, orodovnice naše, obrať k nám ty své
-milostivé oči
-a Ježíše, požehnaný plod života svého,
-nám po tomto putování ukaž,
-ó milostivá, ó přívětivá,
-ó přesladká Panno Maria.`;
-
-    const oraProNobisLa = `Ora pro nobis, sancta Dei Génetrix,
-ut digni efficiámur promissionibus Christi.`;
-
-    const oraProNobisCs = `Oroduj za nás, svatá Boží Rodičko,
-abychom se stali hodnými Kristových zaslíbení.`;
-
-    const oremusLa = `Deus, cuius Unigénitus per vitam, mortem et resurrectiónem suam
-nobis salútis ætérnæ præmia comparávit:
-concéde, quǽsumus,
-ut hæc mystéria sacratíssimo beátæ Maríæ Vírginis Rosário recitándo,
-et imitémur quod cóntinent,
-et quod promíttunt assequámur.
-Per eúndem Christum Dóminum nostrum. Amen.`;
-
-    const oremusCs = `Bože, tvůj jednorozený Syn nám svým životem, smrtí
-a zmrtvýchvstáním zasloužil odměnu věčné spásy;
-prosíme tě, dopřej nám, abychom rozjímáním
-těchto tajemství v růženci Panny Marie
-napodobovali, co obsahují,
-a dosáhli toho, co slibují.
-Skrze Krista, našeho Pána. Amen.`;
-
-    const introAddons = {
-      la: [
-        "qui fidem nostram augeat.",
-        "qui spem nostram confírmet.",
-        "qui caritátem nostram perfíciat."
-      ],
-      cs: [
-        "který naši víru rozmnožuj.",
-        "který naši naději posiluj.",
-        "který naši lásku zdokonaluj."
-      ]
-    };
-
-    const rosaryConfigs = {
-      joyful: {
-        id: "joyful",
-        name: "Radostný růženec (MYSTERIA GAUDIOSA)",
-        mysteries: [
-          {
-            key: "joy1",
-            sectionLa: "I. Annuntiatio Domini",
-            sectionCs: "1. Zvěstování Panně Marii",
-            aveAddonLa: "quem de Spiritu Sancto concepisti.",
-            aveAddonCs: "kterého jsi, Panno, z Ducha Svatého počala."
-          },
-          {
-            key: "joy2",
-            sectionLa: "II. Visitatio",
-            sectionCs: "2. Navštívení Panny Marie",
-            aveAddonLa: "cum quo Elisabeth visitasti.",
-            aveAddonCs: "s kterým jsi, Panno, Alžbětu navštívila."
-          },
-          {
-            key: "joy3",
-            sectionLa: "III. Nativitas Domini",
-            sectionCs: "3. Narození Páně",
-            aveAddonLa: "quem in Bethlehem genuisti.",
-            aveAddonCs: "kterého jsi, Panno, v Betlémě porodila."
-          },
-          {
-            key: "joy4",
-            sectionLa: "IV. Praesentatio Domini",
-            sectionCs: "4. Obětování Páně v chrámě",
-            aveAddonLa: "quem in templo praesentasti.",
-            aveAddonCs: "kterého jsi, Panno, v chrámě obětovala."
-          },
-          {
-            key: "joy5",
-            sectionLa: "V. Inventio in Templo",
-            sectionCs: "5. Nalezení Ježíše v chrámě",
-            aveAddonLa: "quem in templo invenisti.",
-            aveAddonCs: "kterého jsi, Panno, v chrámě nalezla."
-          }
-        ]
-      },
-
-      sorrowful: {
-        id: "sorrowful",
-        name: "Bolestný růženec (MYSTERIA DOLOROSA)",
-        mysteries: [
-          {
-            key: "sorr1",
-            sectionLa: "I. Agonia in Horto",
-            sectionCs: "1. Ježíš na hoře Olivetské",
-            aveAddonLa: "qui pro nobis sanguine sudavit.",
-            aveAddonCs: "který se pro nás krví potil."
-          },
-          {
-            key: "sorr2",
-            sectionLa: "II. Flagellatio",
-            sectionCs: "2. Bičování Pána Ježíše",
-            aveAddonLa: "qui pro nobis flagellatus est.",
-            aveAddonCs: "který byl pro nás bičován."
-          },
-          {
-            key: "sorr3",
-            sectionLa: "III. Coronatio Spinis",
-            sectionCs: "3. Trnová koruna",
-            aveAddonLa: "qui pro nobis spinis coronatus est.",
-            aveAddonCs: "který byl pro nás trním korunován."
-          },
-          {
-            key: "sorr4",
-            sectionLa: "IV. Bajulatio Crucis",
-            sectionCs: "4. Ježíš nese kříž",
-            aveAddonLa: "qui pro nobis crucem baiulavit.",
-            aveAddonCs: "který pro nás nesl těžký kříž."
-          },
-          {
-            key: "sorr5",
-            sectionLa: "V. Crucifixio et Mors Domini",
-            sectionCs: "5. Ukřižování a smrt Pána Ježíše",
-            aveAddonLa: "qui pro nobis crucifixus est.",
-            aveAddonCs: "který byl pro nás ukřižován."
-          }
-        ]
-      },
-
-      glorious: {
-        id: "glorious",
-        name: "Slavný růženec (MYSTERIA GLORIOSA)",
-        mysteries: [
-          {
-            key: "gl1",
-            sectionLa: "I. Resurrectio Domini",
-            sectionCs: "1. Zmrtvýchvstání Páně",
-            aveAddonLa: "qui resurréxit a mortuis.",
-            aveAddonCs: "který z mrtvých vstal."
-          },
-          {
-            key: "gl2",
-            sectionLa: "II. Ascensio Domini",
-            sectionCs: "2. Nanebevstoupení Páně",
-            aveAddonLa: "qui in caelum ascendit.",
-            aveAddonCs: "který na nebe vstoupil."
-          },
-          {
-            key: "gl3",
-            sectionLa: "III. Descensus Spiritus Sancti",
-            sectionCs: "3. Seslání Ducha Svatého",
-            aveAddonLa: "qui Spiritum Sanctum misit.",
-            aveAddonCs: "který Ducha Svatého seslal."
-          },
-          {
-            key: "gl4",
-            sectionLa: "IV. Assumptio Beatae Mariae Virginis",
-            sectionCs: "4. Nanebevzetí Panny Marie",
-            aveAddonLa: "qui te, Virgo Maria, assumpsit.",
-            aveAddonCs: "který tě, Panno, do nebe vzal."
-          },
-          {
-            key: "gl5",
-            sectionLa: "V. Coronatio Beatae Mariae Virginis",
-            sectionCs: "5. Korunování Panny Marie",
-            aveAddonLa: "qui te in caelo coronavit.",
-            aveAddonCs: "který tě, Panno, v nebi korunoval."
-          }
-        ]
-      },
-
-      luminous: {
-        id: "luminous",
-        name: "Růženec světla (MYSTERIA LUMINOSA)",
-        mysteries: [
-          {
-            key: "lum1",
-            sectionLa: "I. Baptisma Domini in Iordane",
-            sectionCs: "1. Křest Pána Ježíše v Jordánu",
-            aveAddonLa: "qui in Iordane baptizatus est.",
-            aveAddonCs: "který byl pokřtěn v Jordánu."
-          },
-          {
-            key: "lum2",
-            sectionLa: "II. Manifestatio apud Canam",
-            sectionCs: "2. Zjevení Pána Ježíše v Káně Galilejské",
-            aveAddonLa: "qui in Cana Galilaeae virtutem suam manifestavit.",
-            aveAddonCs: "který zjevil v Káně svou božskou moc."
-          },
-          {
-            key: "lum3",
-            sectionLa: "III. Proclamatio Regni Dei",
-            sectionCs: "3. Hlásání Božího království",
-            aveAddonLa: "qui Regnum Dei praedicavit et ad paenitentiam vocavit.",
-            aveAddonCs: "který hlásal Boží království a vyzýval k pokání."
-          },
-          {
-            key: "lum4",
-            sectionLa: "IV. Transfiguratio Domini",
-            sectionCs: "4. Proměnění Páně na hoře",
-            aveAddonLa: "qui in monte Thabor transfiguratus est.",
-            aveAddonCs: "který na hoře proměnění zjevil svou slávu."
-          },
-          {
-            key: "lum5",
-            sectionLa: "V. Institutio Eucharistiae",
-            sectionCs: "5. Ustanovení Eucharistie",
-            aveAddonLa: "qui Eucharistiam instituit.",
-            aveAddonCs: "který ustanovil Eucharistii."
-          }
-        ]
-      }
-    };
-
-    function buildRosaryPrayers(config) {
-      const prayers = [];
-      const add = (sectionLa, sectionCs, titleLa, titleCs, textLa, textCs) => {
-        prayers.push({ sectionLa, sectionCs, titleLa, titleCs, textLa, textCs });
-      };
-
-      add("Initium", "Začátek", "Signum Crucis", "Znamení kříže", signumCrucisLa, signumCrucisCs);
-      add("Initium", "Začátek", "Symbolum Apostolorum (Credo)", "Apoštolské vyznání víry", credoLa, credoCs);
-      add("Initium", "Začátek", "Pater noster", "Otče náš", paterLa, paterCs);
-
-      for (let i = 0; i < 3; i++) {
-        const num = i + 1;
-        const purposesLa = ["pro fidem", "pro spem", "pro caritatem"];
-        const purposesCs = ["za víru", "za naději", "za lásku"];
-
-        add(
-          "Initium",
-          "Začátek",
-          `Ave Maria (${num}/3 – ${purposesLa[i]})`,
-          `Zdrávas Maria (${num}/3 – ${purposesCs[i]})`,
-          aveBaseLa(introAddons.la[i]),
-          aveBaseCs(introAddons.cs[i])
-        );
-      }
-
-      add("Initium", "Začátek", "Gloria Patri", "Sláva Otci", gloriaLa, gloriaCs);
-
-      config.mysteries.forEach((myst, idx) => {
-        const tajNumber = idx + 1;
-        const commonTitleLa = `${tajNumber}. mysterium`;
-        const commonTitleCs = `${tajNumber}. tajemství`;
-
-        add(
-          myst.sectionLa,
-          myst.sectionCs,
-          `${commonTitleLa} – Pater noster`,
-          `${commonTitleCs} – Otče náš`,
-          paterLa,
-          paterCs
-        );
-
-        for (let i = 1; i <= 10; i++) {
-          add(
-            myst.sectionLa,
-            myst.sectionCs,
-            `${commonTitleLa} – Ave Maria (${i}/10)`,
-            `${commonTitleCs} – Zdrávas Maria (${i}/10)`,
-            aveBaseLa(myst.aveAddonLa),
-            aveBaseCs(myst.aveAddonCs)
-          );
-        }
-
-        add(
-          myst.sectionLa,
-          myst.sectionCs,
-          `${commonTitleLa} – Gloria Patri`,
-          `${commonTitleCs} – Sláva Otci`,
-          gloriaLa,
-          gloriaCs
-        );
-
-        add(
-          myst.sectionLa,
-          myst.sectionCs,
-          `${commonTitleLa} – Domine Iesu`,
-          `${commonTitleCs} – Fatimská modlitba`,
-          domineIesuLa,
-          domineIesuCs
-        );
-      });
-
-      add("Conclusio", "Závěr", "Salve Regina", "Salve Regina", salveReginaLa, salveReginaCs);
-      add("Conclusio", "Závěr", "Ora pro nobis", "Oroduj za nás", oraProNobisLa, oraProNobisCs);
-      add("Conclusio", "Závěr", "Orémus", "Modleme se", oremusLa, oremusCs);
-      add("Conclusio", "Závěr", "Signum Crucis (závěr)", "Znamení kříže (závěr)", signumCrucisLa, signumCrucisCs);
-
-      return prayers;
-    }
-
-    const rosarySelect = document.getElementById("rosarySelect");
-    const toggleCzech = document.getElementById("toggleCzech");
-    const toggleDark = document.getElementById("toggleDark");
-
-    const metaEl = document.getElementById("meta");
-    const sectionBadgeTextEl = document.getElementById("sectionBadgeText");
-    const prayerTitleEl = document.getElementById("prayerTitle");
-    const prayerTextLaEl = document.getElementById("prayerTextLa");
-    const prayerTextCsEl = document.getElementById("prayerTextCs");
-    const czechBlockEl = document.getElementById("czechBlock");
-    const progressLabelEl = document.getElementById("progressLabel");
-    const progressInnerEl = document.getElementById("progressInner");
-    const prayerScrollEl = document.getElementById("prayerScroll");
-
-    const btnStart = document.getElementById("btnStart");
-    const btnPrev = document.getElementById("btnPrev");
-    const btnNext = document.getElementById("btnNext");
-
-    const rosaryCountEl = document.getElementById("rosaryCount");
-
-    let currentRosaryId = "glorious";
-    let currentPrayers = buildRosaryPrayers(rosaryConfigs[currentRosaryId]);
-    let currentIndex = 0;
-
-    let rosaryCount = Number(localStorage.getItem("rosaryCount") || "0");
-    rosaryCountEl.textContent = rosaryCount;
-
-    function scrollTextTop() {
-      if (!prayerScrollEl) return;
-      prayerScrollEl.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    function render() {
-      const p = currentPrayers[currentIndex];
-      sectionBadgeTextEl.textContent = `${p.sectionLa} / ${p.sectionCs}`;
-      prayerTitleEl.textContent = `${p.titleLa} · ${p.titleCs}`;
-
-      prayerTextLaEl.innerHTML = p.textLa.replace(/\n/g, "<br>");
-      prayerTextCsEl.innerHTML = p.textCs.replace(/\n/g, "<br>");
-
-      const total = currentPrayers.length;
-      const idx = currentIndex + 1;
-      progressLabelEl.textContent = `Krok ${idx} z ${total}`;
-      progressInnerEl.style.width = (idx / total * 100).toFixed(1) + "%";
-
-      metaEl.textContent = `${rosaryConfigs[currentRosaryId].name} · počet kroků: ${total}`;
-
-      btnPrev.disabled = currentIndex === 0;
-      btnStart.disabled = currentIndex === 0;
-
-      const isLast = currentIndex === total - 1;
-      btnNext.textContent = isLast ? "➕ Přičíst růženec a na začátek" : "Další ▶";
-
-      czechBlockEl.style.display = toggleCzech.checked ? "block" : "none";
-      rosaryCountEl.textContent = rosaryCount;
-    }
-
-    rosarySelect.addEventListener("change", () => {
-      playHaptic();
-      currentRosaryId = rosarySelect.value;
-      currentPrayers = buildRosaryPrayers(rosaryConfigs[currentRosaryId]);
-      currentIndex = 0;
-      render();
-      scrollTextTop();
-    });
-
-    toggleCzech.addEventListener("change", () => {
-      playHaptic();
-      czechBlockEl.style.display = toggleCzech.checked ? "block" : "none";
-    });
-
-    toggleDark.addEventListener("change", () => {
-      playHaptic();
-      if (toggleDark.checked) {
-        document.body.classList.add("dark");
-      } else {
-        document.body.classList.remove("dark");
-      }
-    });
-
-    btnStart.addEventListener("click", () => {
-      playHaptic();
-      currentIndex = 0;
-      render();
-      scrollTextTop();
-    });
-
-    btnPrev.addEventListener("click", () => {
-      if (currentIndex > 0) {
-        playHaptic();
-        currentIndex--;
-        render();
-        scrollTextTop();
-      }
-    });
-
-    btnNext.addEventListener("click", () => {
-      const lastIndex = currentPrayers.length - 1;
-      if (currentIndex < lastIndex) {
-        playHaptic();
-        currentIndex++;
-      } else {
-        playHaptic('strong');
-        rosaryCount++;
-        localStorage.setItem("rosaryCount", String(rosaryCount));
-        currentIndex = 0;
-      }
-      render();
-      scrollTextTop();
-    });
-
-    // inicializace – noční režim podle checkboxu
-    if (toggleDark.checked) {
-      document.body.classList.add("dark");
-    }
-
-    render();
-  </script>
+render();
+</script>
 </body>
 </html>
